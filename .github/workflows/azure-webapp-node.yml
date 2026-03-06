@@ -26,6 +26,9 @@ jobs:
 
     - name: Build React app
       run: npm run build
+      env:
+        REACT_APP_SMART_PROPERTIES_API: ${{ vars.REACT_APP_SMART_PROPERTIES_API }}
+        REACT_APP_SMART_PROPERTIES_API_V2: ${{ vars.REACT_APP_SMART_PROPERTIES_API_V2 }}
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v4
