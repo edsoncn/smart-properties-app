@@ -4,6 +4,7 @@ import SmartPropertiesCard, { LIST_ACTION, SAVE_ACTION, UPDATE_ACTION } from "..
 import SmartPropertiesToast from "../components/SmartPropertiesToast"
 import SmartPropertiesDeleteModal from "../components/SmartPropertiesDeleteModal"
 import SmartPropertiesTokenModal from "../components/SmartPropertiesTokenModal"
+import SmartPropertiesButton from "../components/SmartPropertiesButton"
 
 const {
     smartPropertiesWorkspaceAll,
@@ -151,10 +152,8 @@ class WorkspaceManagement extends Component {
                                         }} >
                                     Cancel
                                 </Button>
-                                <Button variant="primary" className="btn-fill pull-right"  
-                                        onClick={() => { action === UPDATE_ACTION ? this.update() : this.save() }} >
-                                    {action === UPDATE_ACTION ? 'Update' : 'Save'}
-                                </Button>
+                                <SmartPropertiesButton fill={ true } name = {action === UPDATE_ACTION ? 'Update' : 'Save'}
+                                        onClick={() => { action === UPDATE_ACTION ? this.update() : this.save() }} />
                             </Form.Group>
                             <SmartPropertiesTokenModal ref={this.tokenModal} tenant={this.tenant} workspace={identifier} hasToken={hasToken}></SmartPropertiesTokenModal>
                         </Form>                    

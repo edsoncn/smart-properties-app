@@ -13,6 +13,7 @@ const setUserSessionData = (data) => {
 }
 
 const removeSessionData = () => {
+    Cookies.remove('userId');
     sessionStorage.removeItem("userName");
     sessionStorage.removeItem("userEmail");
     sessionStorage.removeItem("userIcon");

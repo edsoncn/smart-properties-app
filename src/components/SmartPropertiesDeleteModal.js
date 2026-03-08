@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Button } from "react-bootstrap";
+import SmartPropertiesButton from "./SmartPropertiesButton"
+
 
 class SmartPropertiesDeleteModal extends Component {
     
@@ -28,7 +30,7 @@ class SmartPropertiesDeleteModal extends Component {
                 </Modal.Body>
                 <Modal.Footer className="mb-3 d-flex align-items-center justify-content-between">
                     <Button variant="secondary" className="btn-fill" onClick={() => { this.close() }}>Cancel</Button>
-                    <Button variant="primary" className="btn-fill pull-right" onClick={() => { this.callback() }}>Delete</Button>
+                    <SmartPropertiesButton name = "Delete" variant="primary" fill = { true } onClick={() => { this.callback() }} />
                 </Modal.Footer>
             </Modal>
         )
