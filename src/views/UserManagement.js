@@ -3,6 +3,7 @@ import { Form, Button, ListGroup } from "react-bootstrap";
 import SmartPropertiesCard, { LIST_ACTION, SAVE_ACTION, UPDATE_ACTION } from "../components/SmartPropertiesCard"
 import SmartPropertiesToast from "../components/SmartPropertiesToast"
 import SmartPropertiesDeleteModal from "../components/SmartPropertiesDeleteModal"
+import SmartPropertiesButton from "../components/SmartPropertiesButton"
 
 const { 
     smartPropertiesUserAll,
@@ -140,10 +141,8 @@ class UserManagement extends Component {
                                         }} >
                                     Cancel
                                 </Button>
-                                <Button variant="primary" className="btn-fill pull-right"  
-                                        onClick={() => { action === UPDATE_ACTION ? this.update() : this.save() }} >
-                                    {action === UPDATE_ACTION ? 'Update' : 'Save'}
-                                </Button>
+                                <SmartPropertiesButton name = {action === UPDATE_ACTION ? 'Update' : 'Save'} fill={ true } variant="primary"
+                                        onClick={() => { action === UPDATE_ACTION ? this.update() : this.save() }} />
                             </Form.Group>
                         </Form>                    
                     )}>

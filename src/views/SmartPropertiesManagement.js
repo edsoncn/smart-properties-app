@@ -71,12 +71,20 @@ class SmartPropertiesManagement extends Component {
         this.deleteModal = React.createRef();
         this.identifierInput = React.createRef();
         this.smartPropertiesCode = React.createRef();
+        this.btnGenerateTestCases = React.createRef();
+        this.btnExplainCode = React.createRef();
+        this.btnGenerateCode = React.createRef();
+        this.btnUpdateCode = React.createRef();
 
         this.btnSave = React.createRef();
         this.btnUpdate = React.createRef();
         this.btns = [
             this.btnSave,
-            this.btnUpdate
+            this.btnUpdate,
+            this.btnGenerateTestCases,
+            this.btnExplainCode,
+            this.btnGenerateCode,
+            this.btnUpdateCode
         ]
         
         this.rol = sessionStorage.getItem("userRol");
@@ -116,7 +124,7 @@ class SmartPropertiesManagement extends Component {
                     </Col>{
                     action &&
                         <Col md="8">
-                            <SmartPropertiesCard action={ action } saveTitle="New Smart Property" updateTitle={ 'Update ' + selected.name }
+                            <SmartPropertiesCard action={ action } saveTitle="New Smart Property" updateTitle={ (this.rol !== 'tester' ? 'Update ' : 'Test ') + selected.name }
                                     loading={ loading } errorMessage={ errorMessage } plain={ true } onlyCard={ true }
                                 saveOrUpdate={(
                                     <>
@@ -190,10 +198,14 @@ class SmartPropertiesManagement extends Component {
                                         </Row>
                                         <Row className='mb-3'>
                                             <Col md="12">
-                                                <Button className='btn-genai rounded-pill me-2' onClick={() => this.aiGenerateCodeAction()} variant='info'>✨ Generate the code</Button>
-                                                <Button className='btn-genai rounded-pill me-2' onClick={() => this.aiGenerateTestCases()} variant='info'>✨ Generate test cases</Button>
-                                                <Button className='btn-genai rounded-pill me-2' onClick={() => this.aiExplainCode()} variant='info'>✨ Explain the code</Button>
-                                                <Button className='btn-genai rounded-pill' onClick={() => this.aiUpdateCodeAction()} variant='info'>✨ Update the code</Button>
+                                                { this.rol !== 'tester' && (
+                                                    <Button className='btn-genai rounded-pill me-2' onClick={() => this.aiGenerateCodeAction()} variant='info'>✨ Generate the code</Button>
+                                                )}
+                                                <SmartPropertiesButton ref={ this.btnGenerateTestCases } className='btn-genai rounded-pill me-2' onClick={() => this.aiGenerateTestCases()} variant='info' name = "✨ Generate test cases" />
+                                                <SmartPropertiesButton ref={ this.btnExplainCode } className='btn-genai rounded-pill me-2' onClick={() => this.aiExplainCode()} variant='info' name = "✨ Explain the code" />
+                                                { this.rol !== 'tester' && (
+                                                 <Button className='btn-genai rounded-pill' onClick={() => this.aiUpdateCodeAction()} variant='info'>✨ Update the code</Button>
+                                                )}
                                             </Col>
                                             { aiExplainCodeText !== null && 
                                             <Col className='mt-3'>
@@ -220,7 +232,7 @@ class SmartPropertiesManagement extends Component {
                                                                         value={aiGenerateCodeText} onChange={this.handleChangeSelectInputs.bind(this, 'aiGenerateCodeText')} />
                                                             </Col>
                                                             <Col md="12" className='d-flex justify-content-end'>
-                                                                <Button className='btn-genai rounded-pill mt-3' onClick={() => this.aiGenerateCode()} variant='info'>✨ Generate</Button>
+                                                                <SmartPropertiesButton ref={ this.btnGenerateCode } className='btn-genai rounded-pill mt-3' onClick={() => this.aiGenerateCode()} variant='info' name="✨ Generate" />
                                                             </Col>
                                                         </Row>
                                                     </Card.Body>
@@ -236,7 +248,7 @@ class SmartPropertiesManagement extends Component {
                                                                         value={aiUpdateCodeText} onChange={this.handleChangeSelectInputs.bind(this, 'aiUpdateCodeText')} />
                                                             </Col>
                                                             <Col md="12" className='d-flex justify-content-end'>
-                                                                <Button className='btn-genai rounded-pill mt-3' onClick={() => this.aiUpdateCode()} variant='info'>✨ Update</Button>
+                                                                <SmartPropertiesButton ref = { this.btnUpdateCode } className='btn-genai rounded-pill mt-3' onClick={() => this.aiUpdateCode()} variant='info' name="✨ Update" />
                                                             </Col>
                                                         </Row>
                                                     </Card.Body>
@@ -296,6 +308,7 @@ class SmartPropertiesManagement extends Component {
                                                                             }
                                                                         </Col>
                                                                         <Col className="pe-4" md="2">
+                                                                            <Form.Label>&nbsp;</Form.Label>
                                                                             <Button className="btn-bold" variant="danger" onClick={() => this.removeVariable(setIndex, index)}><i className="fa fa-remove"></i></Button>
                                                                         </Col>
                                                                     </Row>
@@ -344,6 +357,7 @@ class SmartPropertiesManagement extends Component {
                                                                                 {typeWithNoneList.map( type => (
                                                                                     <option value={type.value}>{type.name}</option>
                                                                                 ))}
+                                                                                <option value="array">Array</option>
                                                                             </Form.Select>
                                                                         </Col>
                                                                         <Col className="pe-2 ps-2" md="4">
@@ -392,10 +406,10 @@ class SmartPropertiesManagement extends Component {
                                                                 </Row>
                                                                 <Row className='mb-3'>
                                                                     <Col className="ps-4" md="12">
-                                                                        { set.variables.length > 0 && set.edit && 
+                                                                        { set.edit && 
                                                                             <Button className="btn-bold me-3" onClick={() => {selected.sets[setIndex].edit = false; this.setState({selected : selected})}}><i className="fa fa-check"></i></Button>
                                                                         }
-                                                                        { set.variables.length > 0 && !set.edit && 
+                                                                        { !set.edit && 
                                                                             <Button className="btn-bold me-3" onClick={() => {selected.sets[setIndex].edit = true; this.setState({selected : selected})}}><i className="fa fa-pencil-alt"></i></Button>
                                                                         }
                                                                         <SmartPropertiesButton name="Run" fill={ true } variant="danger"
@@ -916,6 +930,7 @@ class SmartPropertiesManagement extends Component {
 
         this.setState({ aiExplainCodeText : '', aiExplainCodeTitle : '', aiGenerateCodeShow : false, aiUpdateCodeShow : false},
             () => {
+                this.pauseBtns()
                 smartPropertiesAiExplainCode(this.tenant, code)
                 .then(([status, result]) => {
                     if(status === 200) {
@@ -927,12 +942,14 @@ class SmartPropertiesManagement extends Component {
                         console.log('Error AI explain code: ' + status);
                         this.toast.current.showError('An error occurred on ia explain code');
                     }
+                    this.resetBtns()
                 })
                 .catch((e) => {
                     this.setState({ aiExplainCodeText : null, aiExplainCodeTitle : null})
 
                     this.toast.current.showError('An unknown error occurred on ia explain code');
                     console.log(e);
+                    this.resetBtns()
                 });
             }
         )
@@ -946,11 +963,21 @@ class SmartPropertiesManagement extends Component {
         selected.sets = null
         this.setState({ selected : selected },
             () => {
+                this.pauseBtns()
                 smartPropertiesAiGenerateTestCases(this.tenant, code)
                 .then(([status, result]) => {
                     if(status === 200) {
                         console.log(result)
-                        selected.sets = result.testCases
+                        let newSets = []
+                        result.testCases.forEach(testCase => {
+                            let set = { 
+                                ...testCase, 
+                                skipDefault: false,
+                                edit: false
+                            }
+                            newSets.push(set)
+                        })
+                        selected.sets = newSets
                     } else {
                         selected.sets = originalSets
 
@@ -958,13 +985,15 @@ class SmartPropertiesManagement extends Component {
                         this.toast.current.showError('An error occurred on ia explain code');
                     }
                     this.setState({ selected : selected})
+                    this.resetBtns()
                 })
                 .catch((e) => {
                     selected.sets = originalSets
                     this.setState({ selected : selected})
 
                     this.toast.current.showError('An unknown error occurred on ia explain code');
-                    console.log(e);
+                    console.log(e)
+                    this.resetBtns()
                 });
             }
         )
@@ -978,6 +1007,7 @@ class SmartPropertiesManagement extends Component {
         selected.code = '...'
         this.setState({ selected : selected },
             () => {
+                this.pauseBtns()
                 smartPropertiesAiGenerateCode(this.tenant, aiGenerateCodeText)
                 .then(([status, result]) => {
                     if(status === 200) {
@@ -990,6 +1020,7 @@ class SmartPropertiesManagement extends Component {
                         this.toast.current.showError('An error occurred on ia generate code');
                     }
                     this.setState({ selected : selected}, () => this.smartPropertiesCode.current.contentEditableOnInput())
+                    this.resetBtns()
                 })
                 .catch((e) => {
                     selected.code = actualCode
@@ -997,6 +1028,7 @@ class SmartPropertiesManagement extends Component {
 
                     this.toast.current.showError('An unknown error occurred on ia generate code');
                     console.log(e);
+                    this.resetBtns()
                 });
             }
         )
@@ -1014,6 +1046,7 @@ class SmartPropertiesManagement extends Component {
         selected.code = '...'
         this.setState({ selected : selected },
             () => {
+                this.pauseBtns()
                 smartPropertiesAiUpdateCode(this.tenant, actualCode, aiUpdateCodeText)
                 .then(([status, result]) => {
                     if(status === 200) {
@@ -1026,6 +1059,7 @@ class SmartPropertiesManagement extends Component {
                         this.toast.current.showError('An error occurred on ia generate code');
                     }
                     this.setState({ selected : selected}, () => this.smartPropertiesCode.current.contentEditableOnInput())
+                    this.resetBtns()
                 })
                 .catch((e) => {
                     selected.code = actualCode
@@ -1033,6 +1067,7 @@ class SmartPropertiesManagement extends Component {
 
                     this.toast.current.showError('An unknown error occurred on ia generate code');
                     console.log(e);
+                    this.resetBtns()
                 });
             }
         )

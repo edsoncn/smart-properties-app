@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import SmartPropertiesCard, { LIST_ACTION, SAVE_ACTION, UPDATE_ACTION } from "../components/SmartPropertiesCard"
 import SmartPropertiesToast from "../components/SmartPropertiesToast"
+import SmartPropertiesButton from "../components/SmartPropertiesButton"
 import { Form, Button } from "react-bootstrap";
 import { ROLES } from "../helpers/constants";
 
@@ -108,13 +109,11 @@ class UserProfile extends Component {
                                     }} >
                                 Cancel
                             </Button>
-                            <Button variant="primary" className="btn-fill pull-right"  
+                            <SmartPropertiesButton name="Update" fill={true} variant="primary"
                                     onClick={() => {
                                         this.setState({loading : true});
                                         this.update();
-                                    }} >
-                                Update
-                            </Button>
+                                    }} />
                         </Form.Group>
                     </Form>                    
                 )}>
