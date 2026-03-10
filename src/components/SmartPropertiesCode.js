@@ -10,11 +10,17 @@ class SmartPropertiesCode extends Component {
 
         this.onChange = props.onChange;
         this.smartPropertiesApi = props.smartPropertiesApi;
+        
+        this.state = {
+            shine: false
+        };
     }
 
     render () {
+        const { shine } = this.state;
+
         return (
-            <ContentEditable id="codeContent" className={ this.props.className ?? '' } 
+            <ContentEditable id="codeContent" className={ (this.props.className ?? '') + (shine ? ' shine-effect' : '') }
                     name="code" html={this.props.code} editable={ this.props.editable ?? 'true' }
                     onChange={this.handleChangeCode.bind(this)} />
         )
@@ -100,6 +106,14 @@ class SmartPropertiesCode extends Component {
         return word = prefix + word + suffix;
 	}
 	
+    shine = () => {
+        this.setState({shine: true});
+    }
+
+    stopShine = () => {
+        this.setState({shine: false});
+    }
+
 }
 
 export default SmartPropertiesCode;

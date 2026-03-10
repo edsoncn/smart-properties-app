@@ -197,6 +197,22 @@ class SmartPropertiesManagement extends Component {
                                             </Col>
                                         </Row>
                                         <Row className='mb-3'>
+                                            { aiExplainCodeText !== null && 
+                                            <Col className='mb-3' md="12">
+                                                    <Card className="genai-response-container p-2 mb-0">
+                                                        {aiExplainCodeText !== '' && 
+                                                            <Card.Header><h5>{ aiExplainCodeTitle }</h5></Card.Header>
+                                                        }
+                                                        <Card.Body>
+                                                            {aiExplainCodeText === '' && 
+                                                                <Spinner animation="border" variant="primary" /> }
+                                                            {aiExplainCodeText !== '' && 
+                                                                <div className="genai-response-text">
+                                                                    <p className='mb-0'>{ aiExplainCodeText }</p>
+                                                                </div> }
+                                                        </Card.Body>
+                                                    </Card>
+                                            </Col> }
                                             <Col md="12">
                                                 { this.rol !== 'tester' && (
                                                     <Button className='btn-genai rounded-pill me-2' onClick={() => this.aiGenerateCodeAction()} variant='info'>✨ Generate the code</Button>
@@ -207,23 +223,8 @@ class SmartPropertiesManagement extends Component {
                                                  <Button className='btn-genai rounded-pill' onClick={() => this.aiUpdateCodeAction()} variant='info'>✨ Update the code</Button>
                                                 )}
                                             </Col>
-                                            { aiExplainCodeText !== null && 
-                                            <Col className='mt-3'>
-                                                <Card className="genai-response-container p-2 mb-0">
-                                                    <Card.Body>
-                                                        <div className="genai-response-text">
-                                                            {aiExplainCodeText === '' && 
-                                                                <Spinner animation="border" variant="primary" /> }
-                                                            {aiExplainCodeText !== '' && <>
-                                                                <h5>{ aiExplainCodeTitle }</h5>
-                                                                <p>{ aiExplainCodeText }</p>
-                                                                </> }
-                                                        </div>
-                                                    </Card.Body>
-                                                </Card>
-                                            </Col> }
                                             { aiGenerateCodeShow &&
-                                            <Col className='mt-3'>
+                                            <Col className='mt-3' md="12">
                                                 <Card className="genai-response-container p-2 mb-0">
                                                     <Card.Body>
                                                         <Row>
@@ -239,7 +240,7 @@ class SmartPropertiesManagement extends Component {
                                                 </Card>
                                             </Col> }
                                             { aiUpdateCodeShow &&
-                                            <Col className='mt-3'>
+                                            <Col className='mt-3' md="12">
                                                 <Card className="genai-response-container p-2 mb-0">
                                                     <Card.Body>
                                                         <Row>
@@ -928,16 +929,16 @@ class SmartPropertiesManagement extends Component {
         const selected = { ...this.state.selected }
         const code = selected.code
 
-        this.setState({ aiExplainCodeText : '', aiExplainCodeTitle : '', aiGenerateCodeShow : false, aiUpdateCodeShow : false},
+        this.setState({ aiExplainCodeText : '', aiExplainCodeTitle : '', aiGenerateCodeShow : false, aiUpdateCodeShow : false },
             () => {
                 this.pauseBtns()
                 smartPropertiesAiExplainCode(this.tenant, code)
                 .then(([status, result]) => {
                     if(status === 200) {
                         console.log(result)
-                        this.setState({ aiExplainCodeText : result.fullDescription, aiExplainCodeTitle : result.description})
+                        this.setState({ aiExplainCodeText : result.fullDescription, aiExplainCodeTitle : result.description })
                     } else {
-                        this.setState({ aiExplainCodeText : null, aiExplainCodeTitle : null})
+                        this.setState({ aiExplainCodeText : null, aiExplainCodeTitle : null })
 
                         console.log('Error AI explain code: ' + status);
                         this.toast.current.showError('An error occurred on ia explain code');
@@ -1004,38 +1005,53 @@ class SmartPropertiesManagement extends Component {
         const selected = { ...this.state.selected }
         const actualCode = selected.code
 
-        selected.code = '...'
-        this.setState({ selected : selected },
+        selected.code = `
+//     █████╗ ███████╗██╗   ██╗██████╗ ███████╗
+//    ██╔══██╗╚══███╔╝██║   ██║██╔══██╗██╔════╝
+//    ███████║  ███╔╝ ██║   ██║██████╔╝█████╗  
+//    ██╔══██║ ███╔╝  ██║   ██║██╔══██╗██╔══╝  
+//    ██║  ██║███████╗╚██████╔╝██║  ██║███████╗
+//    ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ - Generating code using Azure AI Agent ...
+        `
+        this.smartPropertiesCode.current.shine()
+        this.setState({ selected : selected, aiExplainCodeText : '', aiExplainCodeTitle : null },
             () => {
+                this.smartPropertiesCode.current.contentEditableOnInput()
                 this.pauseBtns()
                 smartPropertiesAiGenerateCode(this.tenant, aiGenerateCodeText)
                 .then(([status, result]) => {
                     if(status === 200) {
                         console.log(result)
-                        selected.code = result.code
+                        selected.code = "// Generated code using Azure AI Agent\n" + result.code
+                        this.setState({ selected : selected, aiExplainCodeText : result.fullDescription, aiExplainCodeTitle : result.description }, 
+                            () => this.smartPropertiesCode.current.contentEditableOnInput())
                     } else {
                         selected.code = actualCode
 
                         console.log('Error AI generate code: ' + status);
                         this.toast.current.showError('An error occurred on ia generate code');
+                        this.setState({ selected : selected, aiExplainCodeText : null, aiExplainCodeTitle : null }, 
+                            () => this.smartPropertiesCode.current.contentEditableOnInput())
                     }
-                    this.setState({ selected : selected}, () => this.smartPropertiesCode.current.contentEditableOnInput())
                     this.resetBtns()
+                    this.smartPropertiesCode.current.stopShine()
                 })
                 .catch((e) => {
                     selected.code = actualCode
-                    this.setState({ selected : selected}, () => this.smartPropertiesCode.current.contentEditableOnInput())
+                    this.setState({ selected : selected, aiExplainCodeText : null, aiExplainCodeTitle : null }, 
+                        () => this.smartPropertiesCode.current.contentEditableOnInput())
 
                     this.toast.current.showError('An unknown error occurred on ia generate code');
                     console.log(e);
                     this.resetBtns()
+                    this.smartPropertiesCode.current.stopShine()
                 });
             }
         )
     }
 
     aiGenerateCodeAction() {
-        this.setState({ aiExplainCodeText : null, aiExplainCodeTitle : null, aiGenerateCodeShow : true, aiUpdateCode : false })
+        this.setState({ aiExplainCodeText : null, aiExplainCodeTitle : null, aiGenerateCodeShow : true, aiUpdateCodeShow : false })
     }
 
     aiUpdateCode() {
@@ -1043,31 +1059,39 @@ class SmartPropertiesManagement extends Component {
         const selected = { ...this.state.selected }
         const actualCode = selected.code
 
-        selected.code = '...'
-        this.setState({ selected : selected },
+        selected.code = "// Updating code using Azure AI Agent ...\n" + actualCode
+        this.smartPropertiesCode.current.shine()
+        this.setState({ selected : selected, aiExplainCodeText : '', aiExplainCodeTitle : null },
             () => {
+                this.smartPropertiesCode.current.contentEditableOnInput()
                 this.pauseBtns()
                 smartPropertiesAiUpdateCode(this.tenant, actualCode, aiUpdateCodeText)
                 .then(([status, result]) => {
                     if(status === 200) {
                         console.log(result)
-                        selected.code = result.code
+                        selected.code = "// Updated code using Azure AI Agent\n" + result.code
+                        this.setState({ selected : selected, aiExplainCodeText : result.fullDescription, aiExplainCodeTitle : result.description }, 
+                            () => this.smartPropertiesCode.current.contentEditableOnInput())
                     } else {
                         selected.code = actualCode
 
                         console.log('Error AI generate code: ' + status);
                         this.toast.current.showError('An error occurred on ia generate code');
+                        this.setState({ selected : selected, aiExplainCodeText : null, aiExplainCodeTitle : null }, 
+                            () => this.smartPropertiesCode.current.contentEditableOnInput())
                     }
-                    this.setState({ selected : selected}, () => this.smartPropertiesCode.current.contentEditableOnInput())
                     this.resetBtns()
+                    this.smartPropertiesCode.current.stopShine()
                 })
                 .catch((e) => {
                     selected.code = actualCode
-                    this.setState({ selected : selected}, () => this.smartPropertiesCode.current.contentEditableOnInput())
+                    this.setState({ selected : selected, aiExplainCodeText : null, aiExplainCodeTitle : null }, 
+                        () => this.smartPropertiesCode.current.contentEditableOnInput())
 
                     this.toast.current.showError('An unknown error occurred on ia generate code');
                     console.log(e);
                     this.resetBtns()
+                    this.smartPropertiesCode.current.stopShine()
                 });
             }
         )
