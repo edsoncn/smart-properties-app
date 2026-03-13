@@ -26,6 +26,7 @@ const { removeSessionData } = require("../../configs/authConfig")
 function Header({ tenant }) {
   const location = useLocation();
   const userName = sessionStorage.getItem("userName");
+  const tenantName = sessionStorage.getItem("tenantName");
 
   const mobileSidebarToggle = (e) => {
     e.preventDefault();
@@ -86,7 +87,7 @@ function Header({ tenant }) {
             onClick={(e) => e.preventDefault()}
             className="mx-2"
           >
-            {getBrandText()}
+            {tenantName} - {getBrandText()}
           </Navbar.Brand>
         </div>
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="me-2">
