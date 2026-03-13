@@ -8,6 +8,12 @@ It supports controlled and traceable business logic experimentation through work
 
 Develop the multi-tenant web application with users, roles, workspaces, code editor, test case validation, and generative AI assistance.
 
+## Related repositories
+
+- Smart Properties API: https://github.com/edsoncn/smart-properties-api
+- Smart Properties Compiler: https://github.com/edsoncn/smart-properties-compiler
+- Smart Properties Web Demo: https://github.com/edsoncn/smart-properties-web-demo
+
 ## Available Scripts
 
 In the project directory, you can run:
