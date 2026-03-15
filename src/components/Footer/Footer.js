@@ -25,7 +25,7 @@ class Footer extends Component {
         <Container fluid>
           <nav>
             <p className="copyright text-center">
-              Copyright © 2023 AME Teach Solutions, Lima, Perú
+              Copyright © 2026 AME Tech Solutions, Lima, Perú
             </p>
           </nav>
         </Container>
