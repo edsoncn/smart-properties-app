@@ -146,6 +146,12 @@ class SmartPropertiesManagement extends Component {
                                         }
                                         { action === UPDATE_ACTION && 
                                             <Row className='mb-3'>
+                                                <Col md="6">
+                                                    <Form.Group>
+                                                        <Form.Label>Name</Form.Label>
+                                                        <Form.Control key="control-name" type="text" name="name" onChange={this.handleChangeInput.bind(this)} value={selected.name} />
+                                                    </Form.Group>
+                                                </Col>
                                                 <Col className="pe-1" md="6">
                                                     <Form.Group>
                                                         <Form.Label>Identifier</Form.Label>
@@ -591,6 +597,10 @@ class SmartPropertiesManagement extends Component {
                 console.log("Smart Property Updated");
                 this.toast.current.show('Smart Property ' + smartProperty.name + ' updated');
                 this.loadSmartPropertiesCodeData();
+            } else if (status === 400) {
+                this.toast.current.showError(data.errorMessage);
+                console.log('Bad request: ' + data.errorMessage);
+                this.resetBtns();
             } else {
                 this.toast.current.showError('An error occurred updating the smart property');
                 console.log('Error updating Smart Property: ' + status); 
@@ -621,6 +631,10 @@ class SmartPropertiesManagement extends Component {
             } else if (status === 409) {
                 this.toast.current.showError('Smart property ' + key + ' already exists');
                 this.identifierInput.current.focus();
+                this.resetBtns();
+            } else if (status === 400) {
+                this.toast.current.showError(data.errorMessage);
+                console.log('Bad request: ' + data.errorMessage);
                 this.resetBtns();
             } else {
                 this.toast.current.showError('An error occurred saving the smart property');

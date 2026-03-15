@@ -40,6 +40,8 @@ class WorkspaceManagement extends Component {
         this.tokenModal = React.createRef();
         
         this.tenant = props.tenant;
+        
+        this.btn = React.createRef();
     }
 
     componentDidMount() {
@@ -152,7 +154,7 @@ class WorkspaceManagement extends Component {
                                         }} >
                                     Cancel
                                 </Button>
-                                <SmartPropertiesButton fill={ true } name = {action === UPDATE_ACTION ? 'Update' : 'Save'}
+                                <SmartPropertiesButton ref={ this.btn } fill={ true } name = {action === UPDATE_ACTION ? 'Update' : 'Save'}
                                         onClick={() => { action === UPDATE_ACTION ? this.update() : this.save() }} />
                             </Form.Group>
                             <SmartPropertiesTokenModal ref={this.tokenModal} tenant={this.tenant} workspace={identifier} hasToken={hasToken}></SmartPropertiesTokenModal>
@@ -199,10 +201,14 @@ class WorkspaceManagement extends Component {
                 this.toast.current.showError('Workspace with identifier ' + identifier + ' already exists');
                 this.identifierInput.current.focus();
                 console.log(status + ': ' + JSON.stringify(data));
+            } else if (status === 400) {
+                this.toast.current.showError(data.errorMessage);
+                console.log('Bad request: ' + data.errorMessage);
             }else{
                 this.toast.current.showError('An error occurred creating workspace');
                 console.log(status + ': ' + JSON.stringify(data));
             }
+            this.resetBtn();
         })
         .catch((e) => {
             this.toast.current.showError('An error occurred creating workspace');
@@ -223,10 +229,14 @@ class WorkspaceManagement extends Component {
                 this.setState({...this.initState});
                 this.toast.current.show('Workspace ' + name + ' updated');
                 this.getWorkspaces();
+            } else if (status === 400) {
+                this.toast.current.showError(data.errorMessage);
+                console.log('Bad request: ' + data.errorMessage);
             } else {
                 this.toast.current.showError('An error occurred updating workspace');
                 console.log(status + ': ' + JSON.stringify(data));
             }
+            this.resetBtn();
         })
         .catch((e) => {
             this.toast.current.showError('An error occurred updating workspace');
@@ -276,6 +286,10 @@ class WorkspaceManagement extends Component {
             this.deleteModal.current.close();
             console.log(e);
         });
+    }
+
+    resetBtn() {
+        if(this.btn.current) this.btn.current.reset();
     }
 
 }

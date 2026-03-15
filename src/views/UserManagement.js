@@ -37,6 +37,8 @@ class UserManagement extends Component {
         this.emailInput = React.createRef();
         
         this.tenant = props.tenant;
+        
+        this.btn = React.createRef();
     }
 
     componentDidMount() {
@@ -141,7 +143,7 @@ class UserManagement extends Component {
                                         }} >
                                     Cancel
                                 </Button>
-                                <SmartPropertiesButton name = {action === UPDATE_ACTION ? 'Update' : 'Save'} fill={ true } variant="primary"
+                                <SmartPropertiesButton ref={ this.btn } name = {action === UPDATE_ACTION ? 'Update' : 'Save'} fill={ true } variant="primary"
                                         onClick={() => { action === UPDATE_ACTION ? this.update() : this.save() }} />
                             </Form.Group>
                         </Form>                    
@@ -187,10 +189,14 @@ class UserManagement extends Component {
                 this.toast.current.showError('User with email ' + email + ' already exists');
                 this.emailInput.current.focus();
                 console.log(status + ': ' + JSON.stringify(data));
+            } else if (status === 400) {
+                this.toast.current.showError(data.errorMessage);
+                console.log('Bad request: ' + data.errorMessage);
             }else{
                 this.toast.current.showError('An error occurred creating user');
                 console.log(status + ': ' + JSON.stringify(data));
             }
+            this.resetBtn()
         })
         .catch((e) => {
             this.toast.current.showError('An error occurred creating user');
@@ -211,10 +217,14 @@ class UserManagement extends Component {
                 this.setState({...this.initState});
                 this.toast.current.show('User ' + name + ' updated');
                 this.getUsers();
+            } else if (status === 400) {
+                this.toast.current.showError(data.errorMessage);
+                console.log('Bad request: ' + data.errorMessage);
             } else {
                 this.toast.current.showError('An error occurred updating user');
                 console.log(status + ': ' + JSON.stringify(data));
             }
+            this.resetBtn()
         })
         .catch((e) => {
             this.toast.current.showError('An error occurred updating user');
@@ -263,6 +273,10 @@ class UserManagement extends Component {
             this.deleteModal.current.close();
             console.log(e);
         });
+    }
+
+    resetBtn() {
+        if(this.btn.current) this.btn.current.reset();
     }
 
 }
