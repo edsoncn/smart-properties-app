@@ -1,12 +1,47 @@
 # Smart Properties App
 
-Smart Properties App is a multi-tenant web application for Smart Propeties SaaS platform that externalizes business logic through centralized management and distributed real-time execution. The platform is designed to reduce time-to-change, rule duplication, and tight coupling across multiple applications by providing a readable proprietary DSL with governance and observability assisted by generative AI.
+Smart Properties App is a multi-tenant web application for Smart Properties SaaS platform that externalizes business logic through centralized management and distributed real-time execution. The platform is designed to reduce time-to-change, rule duplication, and tight coupling across multiple applications by providing a readable proprietary DSL with governance and observability assisted by generative AI.
 
 It supports controlled and traceable business logic experimentation through workspaces, auditing, caching, sandboxing, and fast execution strategies such as pre-compilation and JIT. By promoting a single source of truth for business rules and enabling multi-platform integration through SDKs, the platform improves reuse, consistency, and the speed of implementing, validating, and publishing changes.
 
 ## Goal for This App
 
 Develop the multi-tenant web application with users, roles, workspaces, code editor, test case validation, and generative AI assistance.
+
+*Roles:*
+
+- Administrator:
+  - Workspace management
+  - User management
+  - Smart Properties:
+    - List
+    - Create
+    - Update
+    - Delete
+    - Deploy
+    - AI Assistance:
+      - Generate code
+      - Generate test cases
+      - Explain code
+      - Update code
+    - Deploy
+- Operator:
+  - Smart Properties:
+    - List
+    - Create
+    - Update
+    - Delete
+    - AI Assistance:
+      - Generate code
+      - Generate test cases
+      - Explain code
+      - Update code
+- Tester:
+  - Smart Properties:
+    - List
+    - AI Assistance:
+      - Generate test cases
+      - Explain code
 
 ## Related repositories
 
