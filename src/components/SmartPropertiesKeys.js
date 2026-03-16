@@ -82,7 +82,9 @@ class SmartPropertiesKeys extends Component {
                                     <ListGroup.Item key={ 'listItem_' + key } action active={ key === selectedKey } className='d-flex align-items-center justify-content-between'
                                             onClick={ (e) => this.selectKeyOrDelete(e, key) }>
                                         <div>{ key }</div>
-                                        <div className="mt-1"><span className='delete-link' ><i className="nc-icon nc-simple-remove"></i></span></div>
+                                        { this.rol !== 'tester' && (
+                                            <div className="mt-1"><span className='delete-link' ><i className="nc-icon nc-simple-remove"></i></span></div>
+                                        )}
                                     </ListGroup.Item>
                                 ))}
                                 </ListGroup>
